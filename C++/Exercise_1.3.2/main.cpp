@@ -11,13 +11,13 @@ auto build_array(Args&&... args)->std::array<typename std::common_type <Args...>
 
 int main()
 {
-	auto data = build_array(1, 0u, 'a', 3.2f, false);
+	auto data1 = build_array(1, 0u, 'a', 3.2f, false);
 	
-	for (auto i : data)
+	for (auto i : data1)
 		std::cout << i << " ";
 	std::cout << std:: endl;
 
-	auto data2 = build_array(1, "Pakckt", 2.0);
+	auto data2 = build_array(1, "Pakckt", 2.0); 
 }
 
 
