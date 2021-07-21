@@ -109,7 +109,7 @@ public:
 
 int main()
 {
-	singly_ll sll = { 1,2,3 };
+	singly_ll sll = { 1, 2, 3 };
 	sll.push_front(0);
 	std::cout << "첫 번째 리스트: ";
 	for (auto i : sll)
