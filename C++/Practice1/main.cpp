@@ -1,24 +1,46 @@
 #include <iostream>
 #include <algorithm>
-#include <string>
 
 using namespace std;
 
-struct playList_node
+struct playList_track
 {
 	string title;
-	playList_node* next;
+	playList_track* next;
 };
 
 class playList {
 public:
-	using node = playList_node;
-	using node_ptr = node*;
-
+	using track = playList_track;
+	using track_ptr = track*;
 private:
-	node_ptr head;
+	track_ptr head;
 
 public:
+	void push_front(string title)
+	{
+		auto new_track = new track{ title, NULL };
+		if (head != NULL)
+		{	
+			new_track->next = head;
+		}
+		head = new_track;		
+	}
+	void pop_front()
+	{
+		auto first = head;
+		if (head)
+		{
+			head = head->next;
+			delete first;
+		}
+	}
+
+
+
+
+
+
 	void next(string title)
 	{
 		auto new_node = new node{ title, NULL };
