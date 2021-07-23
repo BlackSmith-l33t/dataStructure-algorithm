@@ -3,18 +3,19 @@
 
 using namespace std;
 
-struct playList_track
+struct PlayList_track
 {
 	string title;
-	playList_track* next;
+	PlayList_track* next;	
 };
 
-class playList {
+class PlayList {
 public:
-	using track = playList_track;
+	using track = PlayList_track;
 	using track_ptr = track*;
 private:
 	track_ptr head;
+	track_ptr tail;
 
 public:
 	void push_front(string title)
@@ -24,9 +25,16 @@ public:
 		{	
 			new_track->next = head;
 		}
-		head = new_track;		
+		head = new_track;	
+
+		if (tail != NULL)
+		{
+			// 원형 연결 리스트 구현
+			// 순환적 접근 
+		}
+		
 	}
-	void pop_front()
+	string pop_front()
 	{
 		auto first = head;
 		if (head)
@@ -34,8 +42,52 @@ public:
 			head = head->next;
 			delete first;
 		}
-	}
 
+		return head->title;
+	}
+	
+	struct PlayList_track_iterator
+	{
+	private:
+		track_ptr ptr;
+	
+	public:
+		PlayList_track_iterator(track_ptr p) : ptr(p) {}
+
+		string& operator*() { return ptr->title; }
+
+		track_ptr get() { return ptr; }
+
+		PlayList_track_iterator& operator++()
+		{
+			ptr = ptr->next;
+			return *this;
+		}
+
+		PlayList_track_iterator operator++(int)
+		{
+			PlayList_track_iterator result = *this;
+			return *this;
+		}
+
+		friend bool operator==(const PlayList_track_iterator& left, const PlayList_track_iterator& right)
+		{
+			return left.ptr == right.ptr;
+		}
+
+		friend bool operator!=(const PlayList_track_iterator& left, const PlayList_track_iterator& right)
+		{
+			return left.ptr != right.ptr;
+		}
+	};
+	
+	PlayList_track_iterator begin() { return PlayList_track_iterator(head); }
+	PlayList_track_iterator end() { return PlayList_track_iterator(); }
+	PlayList_track_iterator begin() const { return PlayList_track_iterator(head); }
+	PlayList_track_iterator end() const { return PlayList_track_iterator(); }
+
+
+	
 
 
 
