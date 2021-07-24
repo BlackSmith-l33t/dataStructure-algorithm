@@ -1,5 +1,7 @@
 #include <iostream>
 #include <algorithm>
+#include <forward_list>
+#include <list>	
 
 using namespace std;
 
@@ -27,11 +29,15 @@ public:
 		}
 		head = new_track;	
 
-		if (tail != NULL)
+
+		if (tail == NULL)
 		{
-			new_track->next = tail;
+			tail = head;
 		}
-		tail = head;
+		else
+		{
+			new_track->next = head;
+		}	
 	}
 	string pop_front()
 	{
