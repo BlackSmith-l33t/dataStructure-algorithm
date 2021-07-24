@@ -29,10 +29,9 @@ public:
 
 		if (tail != NULL)
 		{
-			// 원형 연결 리스트 구현
-			// 순환적 접근 
+			new_track->next = tail;
 		}
-		
+		tail = head;
 	}
 	string pop_front()
 	{
@@ -82,9 +81,9 @@ public:
 	};
 	
 	PlayList_track_iterator begin() { return PlayList_track_iterator(head); }
-	PlayList_track_iterator end() { return PlayList_track_iterator(); }
+	PlayList_track_iterator end() { return PlayList_track_iterator(?); }
 	PlayList_track_iterator begin() const { return PlayList_track_iterator(head); }
-	PlayList_track_iterator end() const { return PlayList_track_iterator(); }
+	PlayList_track_iterator end() const { return PlayList_track_iterator(?); }
 
 
 	
