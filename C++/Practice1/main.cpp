@@ -27,17 +27,14 @@ public:
 		{	
 			new_track->next = head;
 		}
-		head = new_track;	
-
 
 		if (tail == NULL)
 		{
 			tail = head;
 		}
-		else
-		{
-			new_track->next = head;
-		}	
+	
+		head = new_track;	
+			
 	}
 	string pop_front()
 	{
@@ -45,11 +42,15 @@ public:
 		if (head)
 		{
 			head = head->next;
+			tail = head;
 			delete first;
 		}
 
+
+
 		return head->title;
 	}
+
 	
 	struct PlayList_track_iterator
 	{
