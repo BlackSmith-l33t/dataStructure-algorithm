@@ -18,6 +18,8 @@ public:
 private:
 	track_ptr head;
 	track_ptr tail;
+	track_ptr play;
+	track_ptr prev;
 
 public:
 	void push_front(string title)
@@ -45,9 +47,6 @@ public:
 			tail = head;
 			delete first;
 		}
-
-
-
 		return head->title;
 	}
 
@@ -88,21 +87,30 @@ public:
 	};
 	
 	PlayList_track_iterator begin() { return PlayList_track_iterator(head); }
-	PlayList_track_iterator end() { return PlayList_track_iterator(?); }
+	PlayList_track_iterator end() { return PlayList_track_iterator(tail); }
 	PlayList_track_iterator begin() const { return PlayList_track_iterator(head); }
-	PlayList_track_iterator end() const { return PlayList_track_iterator(?); }
+	PlayList_track_iterator end() const { return PlayList_track_iterator(tail); }
 
-
-	
-
-
-
-
-
-	void next(string title)
+	string next()
 	{
-		auto new_node = new node{ title, NULL };
+		if (play == NULL)
+		{
+			play = head;
+		}			
+		play = head->next;
+		prev = head;
+		
+		return play->title;
+	}
+
+	string previous()
+	{
+		if (prev == NULL)
+		{
+			prev = head;
+		}
 
 	}
+
 
 };
