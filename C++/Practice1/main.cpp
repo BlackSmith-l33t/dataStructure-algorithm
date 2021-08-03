@@ -8,7 +8,8 @@ using namespace std;
 struct PlayList_track
 {
 	string title;
-	PlayList_track* next;	
+	PlayList_track* next;
+	PlayList_track* prev;
 };
 
 class PlayList {
@@ -18,8 +19,7 @@ public:
 private:
 	track_ptr head;
 	track_ptr tail;
-	track_ptr play;
-	track_ptr prev;
+	track_ptr play = head;	
 
 public:
 	void push_front(string title)
@@ -35,9 +35,9 @@ public:
 			tail = head;
 		}
 	
-		head = new_track;	
-			
+		head = new_track;				
 	}
+	
 	string pop_front()
 	{
 		auto first = head;
@@ -49,7 +49,6 @@ public:
 		}
 		return head->title;
 	}
-
 	
 	struct PlayList_track_iterator
 	{
@@ -91,26 +90,33 @@ public:
 	PlayList_track_iterator begin() const { return PlayList_track_iterator(head); }
 	PlayList_track_iterator end() const { return PlayList_track_iterator(tail); }
 
-	string next()
+	void insert(track_ptr place, string title)
 	{
-		if (play == NULL)
+		auto new_track = new track{ title, NULL };
+		if (place != NULL)
 		{
-			play = head;
-		}			
+			place->next = new_track;
+			new_track->prev = place;
+		}
+	}
+
+	string next()
+	{					
 		play = head->next;
-		prev = head;
 		
 		return play->title;
 	}
 
 	string previous()
 	{
-		if (prev == NULL)
+		play = play->prev;
+		
+		if (play == head)
 		{
-			prev = head;
+			play = tail;
 		}
-
+		
+		return play->title;
 	}
-
 
 };
