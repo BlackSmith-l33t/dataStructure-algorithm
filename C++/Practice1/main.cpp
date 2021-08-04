@@ -1,16 +1,84 @@
 #include <iostream>
-#include <algorithm>
-#include <forward_list>
-#include <list>	
 
 using namespace std;
 
-struct PlayList_track
+template <typename T>
+
+struct cir_list_node
 {
-	string title;
-	PlayList_track* next;
-	PlayList_track* prev;
+	T* date;
+	cir_list_node* next;
+	cir_list_node* prev;
+
+	~cir_list_node()
+	{
+		delete date;
+	}
 };
+
+template <typename T>
+struct cir_list
+{
+public:
+	using node = cir_list_node<T>;
+	using node_ptr = node*;
+
+private:
+	node_ptr head;
+	size_t n;
+
+public:
+	cir_list() : n(0)
+	{
+		head = new node{ NULL, NULL, NULL }; // 모두 NULL로 구성된 기본 노드
+		head->next = head;
+		head->prev = head;
+	}
+
+	size_t size() const
+	{
+		return n;
+	}
+	
+	void insert(const T& value)
+	{
+		node_ptr newNode = new node{ new T(value), NULL, NULL };
+		n++;
+		auto dummy = head->prev;
+		dummy->next = newNode;
+		newNode->prev = dummy;
+		if (head == dummy)
+		{
+			dummy->prev = newNode;
+			newNode->next = dummy;
+			head = newNode;
+			return;
+		}
+		newNode->next = head;
+		head->prev = newNode;
+		head = newNode;
+	}
+
+	void erase(const T& value)
+	{
+		auto cur = head, dummy = head->prev;
+		while (cur != dummy)
+		{
+			if (*(cur->data) == value)
+			{
+				cur->prev->next = cur->next;
+				cur->next->prev = cur->prev;
+				if (cur == head)
+					head = head->next;
+				delete cur;
+				n--;
+				return;
+			}
+			cur = cur->next;
+		}
+	}
+};
+
 
 class PlayList {
 public:
