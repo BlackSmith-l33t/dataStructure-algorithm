@@ -6,13 +6,13 @@ template <typename T>
 
 struct cir_list_node
 {
-	T* date;
+	T* data;
 	cir_list_node* next;
 	cir_list_node* prev;
 
 	~cir_list_node()
 	{
-		delete date;
+		delete data;
 	}
 };
 
@@ -77,7 +77,55 @@ public:
 			cur = cur->next;
 		}
 	}
+
+	struct cir_list_it
+	{
+	private:
+		node_ptr ptr;
+
+	public:
+		cir_list_it(node_ptr p) : ptr(p) {}
+
+		T& operator*()
+		{
+			return *(ptr->data);
+		}
+
+		node_ptr get()
+		{
+			return ptr;
+		}
+
+		cir_list_it& operator++()
+		{
+			ptr = ptr->next;
+			return *this;
+		}
+
+		cir_list_it operator++(int)
+		{
+			cir_list_it it = *this;
+			++(*this);
+			return it;
+		}
+
+		cir_list_it& operator--()
+		{
+			ptr = ptr->prev;
+			return *this;
+		}
+
+		cir_list_it operator--(int)
+		{
+			cir_list_it it = *this;
+			--(*this); return it;
+		}
+
+
+
+	};
 };
+
 
 
 class PlayList {
