@@ -127,7 +127,7 @@ public:
 			return it1.ptr == it2.ptr;
 		}
 
-		friend bool operator!=(const cir_list_it& it1, cir_listit& it2)
+		friend bool operator!=(const cir_list_it& it1, cir_list_it& it2)
 		{
 			return it1.ptr != it2.ptr;
 		}
@@ -153,7 +153,7 @@ public:
 		return cir_list_it{ head->prev };
 	}
 
-	cir_list_it(const cir_list<T>& other) : cir_list()
+	cir_list(const cir_list<T>& other) : cir_list()
 	{
 		for (const auto& i : other)
 			insert(i);
@@ -202,4 +202,13 @@ int main()
 {
 	playlist pl;
 	pl.insert(1);
+	pl.insert(2);
+	cout << "재생 목록 : ";
+	pl.loopOnce();
+
+	playlist p12 = pl;
+	p12.erase(2);
+	p12.insert(3);
+	cout << "두 번째 재생 목록 : ";
+	p12.loopOnce();
 }
