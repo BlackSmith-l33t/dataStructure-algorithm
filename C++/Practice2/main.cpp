@@ -29,9 +29,19 @@ private:
 	size_t n;
 
 public:
-	cardLIst() : n(0)
+	cardList() : n(0)
 	{
-		firstCard = new node{ NULL, NULL };
+		random_device rd;
+		mt19937 gen(rd());
+		uniform_int_distribution<> dist(1, 10);
+
+		firstCard = new node{ NULL, NULL };		
+		
+		for (int i = 0; i < CARD_NUMBER; i++)
+		{
+			auto new_card = new node{ dist(gen), NULL };
+			firstCard->next = new_card;
+		}
 
 	}
 
@@ -44,32 +54,16 @@ public:
 
 };
 
+
 class Player {
 public:
-	using node = cardList_node<T>;
-	using node_ptr = node*;
 	
 private:
 
-
 public:
-
 	Player()
 	{
-		random_device rd;
-		mt19937 gen(rd());
-		uniform_int_distribution<> dist(1, 10);
-
-		auto new_card = new node{ dist(gen), NULL };
-		for (int i = 0; i < CARD_NUMBER; i++)
-		{
-			node_ptr = dist(gen);
-		}
-	}
-
-	~Player()
-	{
-		delete cardList;
+	
 	}
 
 	void GameTable()
@@ -97,13 +91,6 @@ public:
 		return false;
 	}
 
-	void printCard()
-	{
-		for (int i = 0; i < CARD_NUMBER; i++)
-		{
-			cout << cardList[i] << endl;
-		}
-	}
 
 };
 
@@ -113,7 +100,7 @@ int main()
 {
 	Player player;
 	
-	player.printCard();
+	
 
 
 }
