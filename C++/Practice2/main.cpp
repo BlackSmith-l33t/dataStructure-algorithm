@@ -1,106 +1,198 @@
 #include <iostream>	
+#include <vector>
+#include <array>
+#include <sstream>
+#include <algorithm>
 #include <random>
+#include <chrono>
 
 using namespace std;
 
-#define CARD_NUMBER 13
-
-
-template <typename T>
-struct cardList_node
+struct card
 {
-	T* card;
-	cardList_node* next;
-	
-	~cardList_node()
+	int number;
+
+	enum suit
 	{
-		delete card;
-	}
-};
+		HEART,
+		SPADE,
+		CLUB,
+		DIAMOND
+	} suit;
 
-template <typename T>
-struct cardList {
-public:
-	using node = cardList_node<T>;
-	using node_ptr = node*;
-
-private:
-	node_ptr firstCard;
-	size_t n;
-
-public:
-	cardList() : n(0)
+	string to_string() const
 	{
-		random_device rd;
-		mt19937 gen(rd());
-		uniform_int_distribution<> dist(1, 10);
+		ostringstream os;
 
-		firstCard = new node{ NULL, NULL };		
-		
-		for (int i = 0; i < CARD_NUMBER; i++)
+		if (number > 0 && number <= 10)
 		{
-			auto new_card = new node{ dist(gen), NULL };
-			firstCard->next = new_card;
+			os << number;
 		}
+		else
+		{
+			switch (number)
+			{
+			case 1:
+				os << "Ace";
+				break;
+			case 11:
+				os << "Jack";
+				break;
+			case 12:
+				os << "Queen";
+				break;
+			case 13: 
+				os << "King";
+			default:
+				return "Invalid card";
+			}
 
+			os << " of ";
+
+			switch (suit)
+			{
+			case HEART:
+				os << "hearts";
+				break;
+			case SPADE:
+				os << "spades";
+				break;
+			case CLUB:
+				os << "clubs";
+				break;
+			case DIAMOND:
+				os << "diamonds";
+				break;
+			}
+			
+			return os.str();
+		}
 	}
-
-	size_t size() const
-	{
-		return n;
-	}
-
-
-
 };
 
+struct game
+{
+	array<card, 52> deck;
+	vector<card> player1, player2, player3, player4;
 
-class Player {
-public:
-	
-private:
-
-public:
-	Player()
+	void buildDeck()
 	{
-	
+		for (int i = 0; i < 13; i++)
+		{
+			deck[i] = card{ i + 1, card::HEART };
+		}
+		for (int i = 0; i < 13; i++)
+		{
+			deck[i + 13] = card{ i + 1, card::SPADE };
+		}
+		for (int i = 0; i < 13; i++)
+		{
+			deck[i + 26] = card{ i + 1, card::CLUB };
+		}
+		for (int i = 0; i < 13; i++)
+		{
+			deck[i + 39] = card{ i + 1, card::DIAMOND };
+		}
 	}
 
-	void GameTable()
+	void dealCards()
 	{
-
+		unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+		shuffle(deck.begin(), deck.end(), default_random_engine(seed));
+		player1 = { deck.begin(), deck.begin() + 13 };
+		player2 = { deck.begin() + 13, deck.begin() + 26 };
+		player3 = { deck.begin() + 26, deck.begin() + 39 };
+		player4 = { deck.begin() + 39, deck.end() };
 	}
 
-	void Shuffle()
+	bool compareAndRemove(vector<card>& p1, vector<card>& p2)
 	{
-
-	}
-
-	void SelectRandomCard()
-	{
-
-	}
-
-	void MatchTest()
-	{
-
-	}
-
-	bool IsWinner()
-	{
+		if (p1.back().number == p2.back().number)
+		{
+			p1.pop_back();
+			p2.pop_back();
+			return true;
+		}
 		return false;
 	}
 
+	void playOneRound()
+	{
+		if (compareAndRemove(player1, player2))
+		{
+			compareAndRemove(player3, player4);
+			return;
+		}
+		else if (compareAndRemove(player1, player3))
+		{
+			compareAndRemove(player2, player4);
+			return;
+		}
+		else if (compareAndRemove(player1, player4))
+		{
+			compareAndRemove(player2, player3);
+			return;
+		}
+		else if (compareAndRemove(player2, player3))
+		{
+			return;
+		}
+		else if (compareAndRemove(player2, player4))
+		{
+			return;
+		}
+		else if (compareAndRemove(player3, player4))
+		{
+			return;
+		}
 
+		unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+		shuffle(player1.begin(), player1.end(), default_random_engine(seed));
+		shuffle(player2.begin(), player2.end(), default_random_engine(seed));
+		shuffle(player3.begin(), player3.end(), default_random_engine(seed));
+		shuffle(player4.begin(), player4.end(), default_random_engine(seed));
+	}
+
+	bool isGameComplete() const
+	{
+		return player1.empty() || player2.empty() || player3.empty() || player4.empty();
+	}
+
+	void playGame()
+	{
+		while (not isGameComplete())
+		{	
+			playOneRound();
+		}
+	}
+
+	int getWinner() const
+	{
+		if (player1.empty())
+		{
+			return 1;
+		}
+		if (player2.empty())
+		{
+			return 2;
+		}
+		if (player3.empty())
+		{
+			return 3;
+		}
+		if (player4.empty())
+		{
+			return 4;
+		}
+	}
 };
-
-
 
 int main()
 {
-	Player player;
-	
-	
-
-
+	game newGame;
+	newGame.buildDeck();
+	newGame.dealCards();
+	newGame.playGame();
+	auto winner = newGame.getWinner();
+	cout << winner << "번 플레이어가 이겼습니다.!" << endl;
 }
