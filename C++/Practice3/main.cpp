@@ -4,6 +4,13 @@
 
 using namespace std;;
 
+enum jobMenu
+{
+	None,
+	AddJob,	
+	Exit
+};
+
 class Job 
 {
 protected:
@@ -12,25 +19,19 @@ protected:
 	string name;
 	
 public:
-	/*Job(int id, int countPage, int name)
-	{
-		this->id = id;
-		this->countPage = countPage;
-		this->name = name;
-	}*/
 
 	void inputJob() {
 		cout << "작업 ID : ";
 		cin >> id;
 		
-		cout << endl << "요청자 이름 : ";
+		cout << "요청자 이름 : ";
 		cin >> name;
 		
 		cout << "인쇄 페이지 수 : ";
 		cin >> countPage;
 	}
 
-	string toString()
+	void toString()
 	{
 		cout << "작업 ID : " << id << endl;
 		cout << "요청자 이름 : " << name << endl;
@@ -42,10 +43,14 @@ class Printer : Job
 {
 private:
 	queue<Job> jobList;
+	int jobNumber;
+	jobMenu newJobMenu = None;
 public:
-	void AddJob(Job job) 
+	void AddJob() 
 	{
-		jobList.push(job);
+		Job newJob;
+		inputJob();
+		jobList.push(newJob);
 	}
 
 	void ProcessJob() 
@@ -53,19 +58,46 @@ public:
 		cout << "처리된 작업 요청: " << endl;
 		toString();	
 		jobList.pop();
-	}
+	}	
 
 	void Operate()
 	{
 		while (true)
 		{
+			cout << "1. 작업 추가 | 2. 종료" << endl;
+			cin >> jobNumber;
+			newJobMenu = (jobMenu)jobNumber;
+
+			if (newJobMenu == jobMenu::AddJob)
+			{
+				AddJob();				
+			}
+			else if (newJobMenu == jobMenu::Exit)
+			{
+				break;
+			}
+			else
+			{
+				cout << "올바른 작업을 선택하세요" << endl;
+			}			
+		}	
+
+		if (!jobList.empty())
+		{
 			ProcessJob();
 		}
+		else
+		{
+			cout << "할당된 작업 없음";
+		}
+		return;
 	}
 };
 
 
 
 int main() {
-	
+	Job newJob;
+	Printer newPrinter;
+	newPrinter.Operate();
 }
