@@ -66,16 +66,11 @@ int main()
 	cout << "myVector.at(i) :" << myVector.at(2) << endl;
 	cout << "myVector[i] :" << myVector[2] << endl;
 
-	myVector.pop_back();
-	myVector.pop_back();
-	myVector.pop_back();
-	myVector.pop_back();
-	myVector.pop_back();
-	myVector.pop_back();
-	myVector.pop_back();
-	myVector.pop_back();
-	myVector.pop_back();
-
+	for (int i = 0; i < 10; i++)
+	{
+		myVector.pop_back();
+	}
+	
 	cout << "vector.size() = " << myVector.size() << endl;
 	cout << "vector.capacity() = " << myVector.capacity() << endl;
 
