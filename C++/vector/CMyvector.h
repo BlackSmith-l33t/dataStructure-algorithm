@@ -166,7 +166,12 @@ typename CMyVector<T>::iterator CMyVector<T>::begin()
 template <typename T>
 typename CMyVector<T>::iterator CMyVector<T>::end()
 {
-	return *this;
+	iterator newIter;
+	newIter.pVector = this;
+	newIter.pData = this->pDataArray;
+	newIter.m_index = -1;
+
+	return newIter;
 }
 
 
@@ -176,9 +181,9 @@ T& CMyVector<T>::iterator::operator*()
 	// 1. iterator가 Vector의 데이터 변경으로 잘못된 곳을 가르키고 있는 경우
 	// 2. iterator가 가르키고 있는 곳에 데이터 아에 없는 경우
 	// 3. iterator가 end() iterator일 때
-	if (pVector->pDataArray != pData || pVector->m_size <= m_index || m_capacity == -1)
+	if (pVector->pDataArray != pData || pVector->m_size <= m_index || m_index == -1)
 	{
-		assert(false);
+		assert(nullptr);
 	}
 
 	return pData[m_index];
@@ -190,6 +195,41 @@ typename CMyVector<T>::iterator& CMyVector<T>::iterator::operator++() //++iter;
 	// 2. iterator가 이미 end() iterator였을 떄 assert();
 	// 3. iterator가 마지막 데이터를 가리키고 있을 경우 : iterator end()
 
+	if (pVector->pDataArray != pData || -1 == m_index)
+	{
+		assert(nullptr);
+	}
 
+	if (m_index == pVector->m_size - 1)
+	{
+		m_index = -1;
+	}
+	else
+	{
+		m_index++;
+	}
 
+	return *this;
+}
+
+template<typename T> 
+typename CMyVector<T>::iterator CMyVector<T>::iterator::operator++(int) //iter++;
+{
+
+	iterator dummy = *this;
+
+	if (pVector->pDataArray != pData || -1 == m_index)
+	{
+		assert(nullptr);
+	}
+
+	if (m_index == pVector->size() - 1)
+	{
+		m_index = -1;
+	}
+	else
+	{
+		++(*this);
+	}
+	return dummy;
 }
