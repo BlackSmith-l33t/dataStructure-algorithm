@@ -15,14 +15,14 @@ int main()
 	cout << myVector.at(0) << endl;
 	cout << myVector[0] << endl;
 
+	/*myVector.pop_back();
 	myVector.pop_back();
-	myVector.pop_back();
-	myVector.pop_back();
+	myVector.pop_back();*/
 	//myVector.pop_back();
 
 	
 
-	//CMyVector<int>::iterator iter;
+	CMyVector<int>::iterator iter;
 
 	//// iterator È°¿ë
 	//cout << "iter : ";
@@ -32,22 +32,23 @@ int main()
 	//}
 	//cout << endl << endl;
 
-	//// iter++ test
-	//iter = myVector.begin();
-	//cout << "iter++ : " << *(iter++) << endl;
-	//cout << "iter   : " << *iter << endl;
-	//cout << endl;
+	// iter++ test
+	iter = myVector.begin();
+	cout << "iter++ : " << *(iter++) << endl;
+	cout << "iter   : " << *iter << endl;
+	cout << endl;
 
 	//// iter-- test
 	//cout << "iter-- : " << *(iter--) << endl;
 	//cout << "iter   : " << *iter << endl;
 	//cout << endl;
 
-	//// ++iter test
-	//++iter = myVector.begin();
-	//cout << "++iter : " << *(++iter) << endl;
-	//cout << "iter   : " << *iter << endl;
-	//cout << endl;
+	// ++iter test
+	++iter = myVector.begin();
+	cout << "iter   : " << *iter << endl;
+	cout << "++iter : " << *(++iter) << endl;
+	cout << "iter   : " << *iter << endl;
+	cout << endl;
 
 	//// --iter test	
 	//cout << "--iter : " << *(--iter) << endl;
