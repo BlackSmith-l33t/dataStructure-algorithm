@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <assert.h>
+using namespace std;
 
 // Node
 template <typename T>
@@ -44,7 +45,9 @@ public:
 	void pop_front();
 
 	T	 front();
+	T	 back();
 	T	 operator[](int n);
+	void printAll();
 
 	int size() const;
 	bool empty();
@@ -114,7 +117,7 @@ void CMyList<T>::pop_back()
 template<typename T>
 void CMyList<T>::push_front(const T& data)
 {
-	Node<T>* newNode = newNode<T>(data, nullptr, nullptr);
+	Node<T>* newNode = new Node<T>(data, nullptr, nullptr);
 	if (m_size > 0)
 	{
 		newNode->pNext = pHeadNode;
@@ -183,12 +186,22 @@ template<typename T>
 {
 	if (0 == m_size)
 	{
-		// assert(0 == m_size);
-		return;
+		assert(0 == m_size);		
 	}
 
-	return pHeadNode->m_data[0];
+	return pHeadNode->m_data;
 }
+
+ template<typename T>
+ T CMyList<T>::back()
+ {
+	 if (0 == m_size)
+	 {
+		 assert(0 == m_size);
+	 }
+
+	 return pTailNode->m_data;
+ }
 
 template<typename T>
 T CMyList<T>::operator[](int n)
@@ -211,4 +224,33 @@ T CMyList<T>::operator[](int n)
 	}
 
 	return dummyNode->m_data;
+}
+
+template<typename T>
+void CMyList<T>::printAll()
+{
+
+	if (0 == m_size)
+	{
+		cout << "배열은 비어있습니다." << endl;
+		return;
+	}
+	else
+	{
+		Node<T>* printNode = new Node<T>(pHeadNode->m_data, pHeadNode->pPrev, pHeadNode->pNext);
+
+		int count = m_size;
+		while (count)
+		{
+			count--;
+			cout << printNode->m_data;
+			if (count > 0)
+			{
+				cout << ", ";
+			}
+			printNode = printNode->pNext;
+		}
+		cout << endl;
+	}
+
 }
