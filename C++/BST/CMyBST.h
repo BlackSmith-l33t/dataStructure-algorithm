@@ -157,8 +157,8 @@ typename CMyBST<T>::iterator CMyBST<T>::begin()
 	}
 	
 	return iterator(this, pCurrent);  
-	//ㄴiterator *newIter = new iterator(this, pCurrent) <--- 이런방식으로 하는것이 아닌
-	//  현재 구현한 방식으로 어떻게 가능한것인지 잘 모르겠습니다.
+	//ㄴiterator *newIter = new iterator(this, pCurrent) 
+	//			 return newIter; <--- 이런방식으로 구현해도 되는 것일까? 결국 같은 것?
 }
 
 template<typename T>
@@ -247,15 +247,56 @@ typename CMyBST<T>::iterator& CMyBST<T>::iterator::operator++()
 template<typename T>
 typename CMyBST<T>::iterator CMyBST<T>::iterator::operator++(int)
 {
+	// 0. 예외처리, 하나도 없었을 때, 이미 end() iterator였을 때
+	if (nullptr == this->m_pMyBST->m_pRootNode || nullptr == m_pBinaryNode)
+	{
+		assert(nullptr);
+	}
+	
+	iterator iter = iterator(this->m_pMyBST, this->m_pBinaryNode);
+	++(this);
 
-
-	return iterator();
+	return iter;
 }
 
 
 template<typename T>
 typename CMyBST<T>::iterator CMyBST<T>::insert(const T& target)
 {
+	BinaryNode<T>* newNode = new BinaryNode<T>(target, nullptr, nullptr, nullptr);
+	BinaryNode<T>* pCurrent = m_pRootNode;
+
+	// 0. 아무것도 들어있지 않을때
+	if (nullptr == m_pRootNode)
+	{
+		m_pRootNode = newNode;
+	}
+
+	while (true)
+	{
+		// 1. 루트노드보다 작을 때
+		if (newNode->data < m_pRootNode->data)
+		{
+			pCurrent = m_pRootNode->pLeft;
+			newNode->pParent = pCurrent;
+			pCurrent->pLeft = newNode;
+		}
+		// 2. 루트노드보다 클 때
+		else if (newNode->data > m_pRootNode->data)
+		{
+			pCurrent = m_pRootNode->pRight;
+			newNode->pParent = pCurrent;
+			pCurrent->pRight = newNode;
+		}
+	    // 3. 같을때 무시
+		else
+		{
+			delete newNode;
+			break;
+		}
+	}
+
+	return iterator(this, newNode);
 
 }
 
