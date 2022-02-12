@@ -1,6 +1,7 @@
 #pragma once
 #include <assert.h>
-
+#include <iostream>
+using namespace std;
 
 template <typename T>
 struct BinaryNode
@@ -75,6 +76,7 @@ public:
 	void clear();
 	unsigned int size();
 	bool empty();	
+	void printNode(BinaryNode<T>* node);
 
 	// 여기부터 과제
 	class iterator
@@ -89,18 +91,18 @@ public:
 		iterator(CMyBST<T>* pBinaryBST, BinaryNode<T>* pNode);
 		~iterator();
 
-		T*			operator*();
+		T&			operator*();
 		iterator&	operator++();
 		iterator	operator++(int);
-		/*iterator& operator--();
-		iterator	operator--(int);
-		bool		operator==(const iterator& _other);
-		bool		operator!=(const iterator& _other); */
+		//iterator&	operator--();
+		//iterator	operator--(int);
+		//bool		operator==(const iterator& _other);
+		//bool		operator!=(const iterator& _other); 
 	};
 
 	iterator insert(const T& target);
-	//iterator earse(iterator iter);
-	iterator find(const T& target);
+	iterator erase(const iterator& iter);
+	//iterator find(const T& target);
 	iterator begin();
 	iterator end();
 };
@@ -151,14 +153,14 @@ typename CMyBST<T>::iterator CMyBST<T>::begin()
 		assert(nullptr);
 	}
 
-	while (nullptr == pCurrent->pLeft)
+	while (!(nullptr == pCurrent->pLeft))
 	{
 		pCurrent = pCurrent->pLeft;
 	}
 	
 	return iterator(this, pCurrent);  
 	//ㄴiterator *newIter = new iterator(this, pCurrent) 
-	//			 return newIter; <--- 이런방식으로 구현해도 되는 것일까? 결국 같은 것?
+	//			 return newIter; <--- 이런방식으로 구현해도 되는 것? 결국 같은 것?
 }
 
 template<typename T>
@@ -189,7 +191,7 @@ CMyBST<T>::iterator::~iterator()
 }
 
 template<typename T>
-T* CMyBST<T>::iterator::operator*()
+T& CMyBST<T>::iterator::operator*()
 {
 	return m_pBinaryNode->data;
 }
@@ -270,73 +272,124 @@ typename CMyBST<T>::iterator CMyBST<T>::insert(const T& target)
 	if (nullptr == m_pRootNode)
 	{
 		m_pRootNode = newNode;
+		++m_size;
+		return iterator(this, newNode);
 	}
 
 	while (true)
 	{
 		// 1. 루트노드보다 작을 때
-		if (newNode->data < m_pRootNode->data)
+		if (newNode->data < pCurrent->data)
 		{
-			pCurrent = m_pRootNode->pLeft;
-			newNode->pParent = pCurrent;
-			pCurrent->pLeft = newNode;
+			if (pCurrent->pLeft == nullptr)
+			{
+				m_pRootNode->pLeft = newNode;
+				newNode->pParent = pCurrent;
+				break;
+			}
+			else
+			{		
+				pCurrent = pCurrent->pLeft;
+				if (pCurrent->pLeft == nullptr && pCurrent->data != newNode->data)
+				{
+					pCurrent->pLeft = newNode;
+					newNode->pParent = pCurrent;
+					break;
+				}			
+			}		
 		}
 		// 2. 루트노드보다 클 때
 		else if (newNode->data > m_pRootNode->data)
 		{
-			pCurrent = m_pRootNode->pRight;
-			newNode->pParent = pCurrent;
-			pCurrent->pRight = newNode;
+			if (pCurrent->pRight == nullptr)
+			{
+				pCurrent->pRight = newNode;
+				newNode->pParent = pCurrent;
+				break;
+			}
+			else
+			{
+				pCurrent = pCurrent->pRight;
+				if (pCurrent->pRight == nullptr && pCurrent->data != newNode->data)
+				{
+					pCurrent->pRight = newNode;
+					newNode->pParent = pCurrent;
+					break;
+				}
+			}
 		}
 	    // 3. 같을때 무시
 		else
 		{
 			delete newNode;
-			break;
+			return iterator(this, pCurrent);;
 		}
 	}
 
+	++m_size;
 	return iterator(this, newNode);
+}
 
+template<typename T>
+typename CMyBST<T>::iterator CMyBST<T>::erase(const iterator& iter)
+{
+	CMyBST<T>::iterator indexIter = begin();
+	BinaryNode<T> newNode = iter.m_pBinaryNode;
+
+	// iterator 와 노드가 없을 때 
+	if (nullptr == iter || nullptr == m_pRootNode->data || 0 == this->m_size)
+	{
+		assert(nullptr);
+	}
+
+	while (indexIter != end())
+	{
+		// 0. 해당 노드를 찾았을 때
+		if (eraseIter == indexIter)
+		{
+			// 0-1. 삭제할 노드에 왼쪽 자식이 있을 경우
+			if (1)
+			{
+
+			}
+			// 0-2. 삭제할 노드에 오른쪽 자식이 있을 경우
+			else if (1)
+			{
+
+			}
+
+			// 0-3. 아무것도 없을 경우
+			else
+			{
+
+			}
+		}	
+		++indexIter;
+	}
+
+	// 삭제할 값이 노드에 없을 때	
+	return iterator(this);
 }
 
 
+//template<typename T>
+//typename CMyBST<T>::iterator CMyBST<T>::find(const T& target)
+//{
+//	return end();
+//}
+
 template<typename T>
-typename CMyBST<T>::iterator CMyBST<T>::find(const T& target)
+void CMyBST<T>::printNode(BinaryNode<T>* node)
 {
-	BinaryNode<T>* pCurrent = m_pRootNode;
-
-	//1. 하나도 없었는데 find를 한 경우 
-	if (0 == m_size) // m_pRootNode == nullptr;
+	// TODO : 중위순회로 출력할것 
+	if (node == nullptr)
 	{
-		return end();
+		return;
 	}
 
-	while (true)
-	{
-		if (target < pCurrent->data)
-		{
-			if (nullptr == pCurrent->pLeft)
-			{
-				break;
-			}
-			pCurrent = pCurrent->pLeft;
-		}
-		else if (target > pCurrent->data)
-		{
-			if (nullptr == pCurrent->pRight)
-			{
-				break;
-			}
-			pCurrent = pCurrent->pRight;
-		}
-		else // target == pCurrent->data
-		{
-			return iterator(this, pCurrent);
-		}
-	}
-
-	return end();
+	printNode(node->pLeft);
+	cout << node->data;
+	printNode(node->pRight);
 }
 
 
