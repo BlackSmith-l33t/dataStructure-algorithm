@@ -334,7 +334,8 @@ template<typename T>
 typename CMyBST<T>::iterator CMyBST<T>::erase(const iterator& iter)
 {
 	CMyBST<T>::iterator indexIter = begin();
-	BinaryNode<T> newNode = iter.m_pBinaryNode;
+	BinaryNode<T>* eraseNode = iter.m_pBinaryNode;
+	BinaryNode<T>* pCurrent = iter.m_pBinaryNode;
 
 	// iterator 와 노드가 없을 때 
 	if (nullptr == iter || nullptr == m_pRootNode->data || 0 == this->m_size)
@@ -345,10 +346,27 @@ typename CMyBST<T>::iterator CMyBST<T>::erase(const iterator& iter)
 	while (indexIter != end())
 	{
 		// 0. 해당 노드를 찾았을 때
-		if (eraseIter == indexIter)
+		if (iter == indexIter)
 		{
-			// 0-1. 삭제할 노드에 왼쪽 자식이 있을 경우
-			if (1)
+			// 0-1. 삭제할 노드에 양쪽에 자식이 있을 경우
+			if (eraseNode->pLeft != nullptr && eraseNode->pRight != nullptr)
+			{
+				pCurrent = eraseNode->pLeft;
+				eraseNode->pParent->pLeft = pCurrent;			
+				
+				if (pCurrent->pRight != nullptr)
+				{
+					pCurrent->pRight->pRight = eraseNode->pRight;
+				}
+				else
+				{
+					pCurrent->pRight = eraseNode->pRight;
+				}
+				delete eraseNode;
+				--m_size;
+			}
+			// 0-3. 삭제할 노드에 왼쪽 자식이 있을 경우
+			else if (1)
 			{
 
 			}
@@ -357,7 +375,6 @@ typename CMyBST<T>::iterator CMyBST<T>::erase(const iterator& iter)
 			{
 
 			}
-
 			// 0-3. 아무것도 없을 경우
 			else
 			{
