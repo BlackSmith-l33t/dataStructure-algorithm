@@ -96,13 +96,13 @@ public:
 		iterator	operator++(int);
 		//iterator&	operator--();
 		//iterator	operator--(int);
-		//bool		operator==(const iterator& _other);
-		//bool		operator!=(const iterator& _other); 
+		bool		operator==(const iterator& _other);
+		bool		operator!=(const iterator& _other); 
 	};
 
 	iterator insert(const T& target);
 	iterator erase(const iterator& iter);
-	//iterator find(const T& target);
+	iterator find(const T& target);
 	iterator begin();
 	iterator end();
 };
@@ -232,7 +232,7 @@ typename CMyBST<T>::iterator& CMyBST<T>::iterator::operator++()
 			// 계속 따라 올라갔는데 부모가 없을때가지 올라갔다 == 처음 노드가 가장 큰(마지막) Node였다.
 			if (nullptr == pCurrent->pParent)
 			{
-				return end();
+				return *this;
 			}			
 			if (this->m_pBinaryNode == pCurrent->pParent->pLeft)
 			{
@@ -259,6 +259,18 @@ typename CMyBST<T>::iterator CMyBST<T>::iterator::operator++(int)
 	++(this);
 
 	return iter;
+}
+
+template<typename T>
+bool CMyBST<T>::iterator::operator==(const iterator& _other)  // date로만 비교했을시에 문제점이 없을 시 생각해보자.
+{
+	return this->m_pBinaryNode->data == _other.m_pBinaryNode->data ? true : false;
+}
+
+template<typename T>
+bool CMyBST<T>::iterator::operator!=(const iterator& _other)
+{
+	return *this == _other ? true : false;
 }
 
 
@@ -334,66 +346,176 @@ template<typename T>
 typename CMyBST<T>::iterator CMyBST<T>::erase(const iterator& iter)
 {
 	CMyBST<T>::iterator indexIter = begin();
+	CMyBST<T>::iterator eraseIter = iter;
+
 	BinaryNode<T>* eraseNode = iter.m_pBinaryNode;
-	BinaryNode<T>* pCurrent = iter.m_pBinaryNode;
+	BinaryNode<T>* pCurrent;
 
 	// iterator 와 노드가 없을 때 
-	if (nullptr == iter || nullptr == m_pRootNode->data || 0 == this->m_size)
+	if (nullptr == iter.m_pBinaryNode || nullptr == iter.m_pMyBST || 0 == this->m_size)
 	{
 		assert(nullptr);
 	}
 
-	while (indexIter != end())
+	while (indexIter != end())  // 02/14 : 반복문을 사용할 필요가 없을 수도 있다.
 	{
-		// 0. 해당 노드를 찾았을 때
-		if (iter == indexIter)
+		// 해당 노드를 찾았을 때
+		if (eraseIter == indexIter)
 		{
-			// 0-1. 삭제할 노드에 양쪽에 자식이 있을 경우
-			if (eraseNode->pLeft != nullptr && eraseNode->pRight != nullptr)
+			// 찾을 노드가 루트노드 일 경우
+			if (eraseNode->isRoot())
 			{
-				pCurrent = eraseNode->pLeft;
-				eraseNode->pParent->pLeft = pCurrent;			
-				
-				if (pCurrent->pRight != nullptr)
+				// 삭제할 노드에 양쪽에 자식이 있을 경우
+				if (eraseNode->pLeft != nullptr && eraseNode->pRight != nullptr)
 				{
-					pCurrent->pRight->pRight = eraseNode->pRight;
+					pCurrent = m_pRootNode = eraseNode->pLeft;
+				
+					if (pCurrent->pRight != nullptr)
+					{
+						while (pCurrent->pRight != nullptr)
+						{
+							pCurrent = pCurrent->pRight;
+						}
+						pCurrent->pRight = eraseNode->pRight;
+					}
+					else
+					{
+						pCurrent->pRight = eraseNode->pRight;
+					}
+					delete eraseNode;
+					--m_size;
 				}
+				// 삭제할 노드에 왼쪽 자식만이 있을 경우
+				else if (eraseNode->pLeft != nullptr && eraseNode->pRight == nullptr)
+				{
+					m_pRootNode = eraseNode->pLeft;
+					delete eraseNode;
+					--m_size;
+				}
+				// 삭제할 노드에 오른쪽 자식만 있을 경우
+				else if (eraseNode->pLeft == nullptr && eraseNode->pRight != nullptr)
+				{
+					m_pRootNode = eraseNode->pRight;
+					delete eraseNode;
+					--m_size;
+				}
+				// 0-3. 자식이 없을 경우
 				else
 				{
-					pCurrent->pRight = eraseNode->pRight;
+					delete eraseNode;
+					--m_size;
 				}
-				delete eraseNode;
-				--m_size;
 			}
-			// 0-3. 삭제할 노드에 왼쪽 자식이 있을 경우
-			else if (1)
+			// 찾을 노드가 왼쪽자식 일 경우
+			else if (eraseNode->isLeftChild())
 			{
+				// 삭제할 노드에 양쪽에 자식이 있을 경우
+				if (eraseNode->pLeft != nullptr && eraseNode->pRight != nullptr)
+				{
+					pCurrent = eraseNode->pLeft;
+					eraseNode->pParent->pLeft = pCurrent;
 
+					if (pCurrent->pRight != nullptr)
+					{
+						while (pCurrent->pRight != nullptr)
+						{
+							pCurrent = pCurrent->pRight;
+						}
+						pCurrent->pRight = eraseNode->pRight;
+					}
+					else
+					{
+						pCurrent->pRight = eraseNode->pRight;
+					}
+					delete eraseNode;
+					--m_size;
+				}
+				// 삭제할 노드에 왼쪽 자식만이 있을 경우
+				else if (eraseNode->pLeft != nullptr && eraseNode->pRight == nullptr)
+				{
+					pCurrent = eraseNode->pLeft;
+					eraseNode->pParent->pLeft = pCurrent;
+					delete eraseNode;
+					--m_size;
+				}
+				// 삭제할 노드에 오른쪽 자식만 있을 경우
+				else if (eraseNode->pLeft == nullptr && eraseNode->pRight != nullptr)
+				{
+					pCurrent = eraseNode->pRight;
+					eraseNode->pParent->pLeft = pCurrent;
+					delete eraseNode;
+					--m_size;
+				}
+				// 0-3. 자식이 없을 경우
+				else
+				{
+					delete eraseNode;
+					--m_size;
+				}
 			}
-			// 0-2. 삭제할 노드에 오른쪽 자식이 있을 경우
-			else if (1)
+			// 찾을 노드가 오른쪽 자식 일 경우
+			else if (eraseNode->isRightChild())
 			{
+				// 삭제할 노드에 양쪽에 자식이 있을 경우
+				if (eraseNode->pLeft != nullptr && eraseNode->pRight != nullptr)
+				{
+					pCurrent = eraseNode->pLeft;
+					eraseNode->pParent->pRight = pCurrent;
 
+					if (pCurrent->pRight != nullptr)
+					{
+						while (pCurrent->pRight != nullptr)
+						{
+							pCurrent = pCurrent->pRight;
+						}
+						pCurrent->pRight = eraseNode->pRight;
+					}
+					else
+					{
+						pCurrent->pRight = eraseNode->pRight;
+					}
+					delete eraseNode;
+					--m_size;
+				}
+				// 삭제할 노드에 왼쪽 자식만이 있을 경우
+				else if (eraseNode->pLeft != nullptr && eraseNode->pRight == nullptr)
+				{
+					pCurrent = eraseNode->pLeft;
+					eraseNode->pParent->pRight = pCurrent;
+					delete eraseNode;
+					--m_size;
+				}
+				// 삭제할 노드에 오른쪽 자식만 있을 경우
+				else if (eraseNode->pLeft == nullptr && eraseNode->pRight != nullptr)
+				{
+					pCurrent = eraseNode->pRight;
+					eraseNode->pParent->pRight = pCurrent;
+					delete eraseNode;
+					--m_size;
+				}
+				// 0-3. 자식이 없을 경우
+				else
+				{
+					delete eraseNode;
+					--m_size;
+				}
 			}
-			// 0-3. 아무것도 없을 경우
-			else
-			{
-
-			}
+		
 		}	
 		++indexIter;
 	}
 
 	// 삭제할 값이 노드에 없을 때	
-	return iterator(this);
+	return iterator();
 }
 
 
-//template<typename T>
-//typename CMyBST<T>::iterator CMyBST<T>::find(const T& target)
-//{
-//	return end();
-//}
+template<typename T>
+typename CMyBST<T>::iterator CMyBST<T>::find(const T& target)
+{
+
+	return end();
+}
 
 template<typename T>
 void CMyBST<T>::printNode(BinaryNode<T>* node)
