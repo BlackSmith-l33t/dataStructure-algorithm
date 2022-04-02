@@ -1,4 +1,4 @@
-# dataStructure & algorithm C++/C
+# dataStructure & algorithm 
 
 백준, 프로그래머스
 
