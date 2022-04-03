@@ -59,22 +59,22 @@ namespace console_Test
 
 		CNode FindMinFNode(List<CNode> list)
 		{
-			CNode minFIter = list[list.Count - 1];
+			CNode minFNode = list[list.Count - 1];
 			int minF = Constans.INF;
 			int minH = Constans.INF;
-			foreach (CNode node in list)
+			foreach (CNode dummyNode in list)
 			{
-				if (true == node.active &&				  // 활성화 됐으면서
-					(node.f < minF ||					  // f가 가장 낮은 정점을 찾자
-					node.f == minF && node.h < minH))     // f 가 똑같다면, 그나마 h가 작은 애로
+				if (true == dummyNode.active &&				  // 활성화 됐으면서
+					(dummyNode.f < minF ||					  // f가 가장 낮은 정점을 찾자
+					dummyNode.f == minF && dummyNode.h < minH))     // f 가 똑같다면, 그나마 h가 작은 애로
 				{
-					minFIter = node;
-					minF = node.f;
-					minH = node.h;
+					minFNode = dummyNode;
+					minF = dummyNode.f;
+					minH = dummyNode.h;
 				}
 			}
 
-			return minFIter;
+			return minFNode;
 		}
 
 		CNode findNodeByPoint(List<CNode> list, CPoint point)
@@ -97,10 +97,43 @@ namespace console_Test
 			CNode startNode = new CNode(true, null, start, 0, GetH(start, end));
 			m_list.Add(startNode);
 
+			while (true)
+            {
+				// 0. 다음으로 탐색할 정점을 list에서 찾아준다.
+				// 다음으로 탐색할 정점 == f가 가장 낮은 정점.
 
-			List<CPoint> path = new List<CPoint> { };
-			return path;
+				CNode minFNode = FindMinFNode(m_list);
 
+				// 1. 도착지에 도착했을 때 
+				// 경로를 return;
+				if (minFNode != m_list[m_list.Count - 1] && minFNode.point == end)
+                {
+					 CNode endNode = minFNode;
+					 CNode pPathNode = endNode;
+
+					List<CPoint> path = new();
+
+					while (pPathNode != null)
+                    {
+						path.Insert(0, pPathNode.point);
+						pPathNode = pPathNode.connect;
+                    }
+					return path;
+                }
+
+				// 2. 더 이상 탐색할 수 없을 때, lsit에 더이상 탐색할 정점이 없음.
+				// 경로를 없이 return;
+				if (minFNode == m_list[m_list.Count	- 1])
+                {
+					List<CPoint> path = new();
+					return path;
+                }
+            }
+
+			{
+				List<CPoint> path = new List<CPoint> { };
+				return path;
+			}
 		}
 
 
