@@ -15,7 +15,7 @@ namespace console_Test
 		public int g;            // 지금까지 온 거리
 		public int h;            // 예상 거리 (장애물 X)
 		
-		public CNode()
+		CNode()
         {
 			active = false;
 			f = Constans.INF;

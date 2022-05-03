@@ -12,7 +12,7 @@ static class Constans
 
 namespace console_Test
 {
-	public enum MODE
+	public enum MODE                                                                                                                  
 	{ 
 		Normal4, 
 		None8,
@@ -25,8 +25,8 @@ namespace console_Test
 	class AStart
     {		
 		//  			    상   하  좌  우  우상 좌상 좌하 우하
-		int[] directionX = { 0,  0, -1,  1,  1,  -1,  -1,   1 };
-		int[] directionY = { 1, -1,  0,  0,  1,   1,  -1,  -1 };
+		public readonly int[] directionX = { 0,  0, -1,  1,  1,  -1,  -1,   1 };
+		public readonly int[] directionY = { 1, -1,  0,  0,  1,   1,  -1,  -1 };
 		
 		int GetH(in Point start, in Point end)
         {
@@ -59,9 +59,9 @@ namespace console_Test
 			int minH = Constans.INF;
 			foreach (CNode dummyNode in list)
 			{
-				if (true == dummyNode.active &&				  // 활성화 됐으면서
-					(dummyNode.f < minF ||					  // f가 가장 낮은 정점을 찾자
-					dummyNode.f == minF && dummyNode.h < minH))     // f 가 똑같다면, 그나마 h가 작은 애로
+				if (true == dummyNode.active &&					     // 활성화 됐으면서
+					(dummyNode.f < minF ||							 // f가 가장 낮은 정점을 찾자
+					dummyNode.f == minF && dummyNode.h < minH))      // f 가 똑같다면, 그나마 h가 작은 애로
 				{
 					minFNode = dummyNode;
 					minF = dummyNode.f;
@@ -163,19 +163,19 @@ namespace console_Test
 					if (minFNode.point.X != x && minFNode.point.Y != y)
 						newG = minFNode.g + 14;
 					else
-						newG = minFNode.g + 10;            // 나를 탐색한 정점이 갖는 g에서 10 더 더함
-					int newH = GetH(new Point(x, y), end);      // 내 좌표부터 도착지 까지 H 함수로 짰자나
-					int newF = newG + newH;                 // f = g + h;
+						newG = minFNode.g + 10;                 // 나를 탐색한 정점이 갖는 g에서 10 더 더함
+					int newH = GetH(new Point(x, y), end);      // 내 좌표부터 도착지 까지 H 함수로 짰으므로
+					int newF = newG + newH;                     // f = g + h;
 
 					// 한번도 안 구해본 정점일때
 					// 그냥 구해 줘야 되고
-					// 리스트에 그 정점도 추가해 줘야돼
+					// 리스트에 그 정점도 추가해 줘야됨
 					if (m_list.Last() == node)
 					{
 						m_list.AddLast(new CNode(true, minFNode, new Point(x, y), newG, newH));
 					}
 					// 이미 있던 정점 일때
-					// f가 더 작을때만 바꿔줄꺼야
+					// f가 더 작을때만 바꿔줌
 					else if (node.f > newF)
 					{
 						node.g = newG;
